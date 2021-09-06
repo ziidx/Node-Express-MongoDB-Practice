@@ -144,6 +144,9 @@ app.get('/api/users/:_id/logs', async (req, res) => {
     }
     
     responseObj.count = user.logs.length;
+    user.logs.forEach(exercise => {
+      exercise.date = new Date(exercise.date).toDateString();
+    })
     responseObj.log = user.logs;
     res.json(responseObj);
   }
@@ -151,7 +154,7 @@ app.get('/api/users/:_id/logs', async (req, res) => {
   catch(err){
     res.send(err.message);
   }
-  
+
 })
 
 const listener = app.listen(process.env.PORT || 3000, () => {
