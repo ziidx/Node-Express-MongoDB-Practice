@@ -1,7 +1,7 @@
 {
 	"name": "workout-logger",
 	"version": "1.0.0",
-	"description": "A REST API project for storing exercise logs, based on FCC Backend Project",
+	"description": "A REST API project for storing exercise/workout logs",
 	"main": "server.js",
 	"scripts": {
 		"start": "node server.js"

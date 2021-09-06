@@ -151,6 +151,7 @@ app.get('/api/users/:_id/logs', async (req, res) => {
   catch(err){
     res.send(err.message);
   }
+  
 })
 
 const listener = app.listen(process.env.PORT || 3000, () => {

@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 //Each user needs a username, number of exercises logged, and full log of each exercise/session
+
 const userEntrySchema = new mongoose.Schema({
     username: {type: String, required: true},
     count: {type: Number, default: 0},
