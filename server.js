@@ -140,14 +140,11 @@ app.get('/api/users/:_id/logs', async (req, res) => {
     }
 
     if(limit){
-      user.logs = user.logs.slice(0,limit);
+      user.logs = user.logs.slice(0,+limit);
     }
     
     responseObj.count = user.logs.length;
-    user.logs.forEach(exercise => {
-      exercise.date = new Date(exercise.date).toDateString();
-    })
-    responseObj.log = user.logs;
+    responseObj.log = user.logs
     res.json(responseObj);
   }
 
