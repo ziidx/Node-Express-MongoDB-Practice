@@ -35,9 +35,10 @@ mongoose.connect(process.env.MONGO_URI, {useNewUrlParser: true, useUnifiedTopolo
 * Gets all users stored in db
 */
 app.get('/api/users', async (req, res) => {
+  console.log(`get all users called`);
   try{
-    const usersInDb = await userEntry.find({}).select('-count -logs -__v');
-    res.json(usersInDb);
+    const users = await userEntry.find({}).select('-logs -__v');
+    res.json(users);
   }
   catch(err){
     console.log(err);
@@ -80,21 +81,25 @@ app.post('/api/users', async (req, res) => {
 * Logs an exercise to corresponding user id, description and duration are required
 */
 app.post('/api/users/:_id/exercises', async(req, res) => {
-
-  const exercise = {date: req.body.date == "" ? new Date().toDateString() : new Date(req.body.date + ' 00:00:00').toDateString(), //Use current date if no date is given
-    description: req.body.description == '' ? null : req.body.description,
-    duration : req.body.duration == '' ? null : parseInt(req.body.duration)
+  const exercise = {
+    date: req.body.date == '' || !req.body.date ? new Date() : new Date(req.body.date), //Use current date if no date is given
+    description: req.body.description == '' ? null: req.body.description,
+    duration : parseInt(req.body.duration)
   };
   
-  
-  try{ //returns user with exercise fields added
-    //error if no matching id is found, runValidators will fail if no input for description or duration
-    const user = await userEntry.findByIdAndUpdate(req.params['_id'], {$inc: {count: 1}, $push: {logs: exercise}}, {new: true, runValidators: true});
+  /**
+   * returns user with exercise fields added
+    error if no matching id is found, runValidators will fail if no input for description or duration
+   */
+  try{
+    const user = await userEntry.findByIdAndUpdate(req.params._id, 
+    {$push: {log: exercise}}, {new: true, runValidators: true});
+
     res.json({
       username: user.username,
       description: exercise.description,
       duration: exercise.duration,
-      date: exercise.date,
+      date: exercise.date.toDateString(), //date property of returned object must be string
       _id: user.id
     });
   }
@@ -112,46 +117,54 @@ app.post('/api/users/:_id/exercises', async(req, res) => {
 /**
 * GET exercise logs and number of exercises for matching user
 */
-
 app.get('/api/users/:_id/logs', async (req, res) => {
-  let startDate = new Date(req.query.from + ' 00:00:00').toDateString();
-  let endDate = new Date(req.query.to + ' 00:00:00').toDateString();
-  let limit = req.query.limit;
-
   try{
-    const user = await userEntry.findById(req.params['_id'])
+    const user = await userEntry.findById(req.params._id);
     const responseObj = {
       username: user.username,
-      _id: user.id,
+      _id: user.id
     }
 
-    if(startDate != 'Invalid Date'){
-      responseObj.from = startDate;
-      user.logs = user.logs.filter(exercise => {
-        return exercise.date >= startDate;
-      })
+    const startDate = new Date(req.query.from) == "Invalid Date" ? Number.MIN_SAFE_INTEGER : new Date(req.query.from).getTime();
+    const endDate = new Date(req.query.to) == "Invalid Date" ? Number.MAX_SAFE_INTEGER: new Date(req.query.to).getTime();
+    const limit = parseInt(req.query.limit);
+
+    //All exercise logs within given date range sorted chronologically. Map function is
+    //called because date property needs to be a string
+    let filteredLog = user.log.filter(exercise => {
+      return startDate <= exercise.date.getTime() && exercise.date.getTime() <= endDate;
+    }).sort((ex1, ex2) => {
+      return ex1.date - ex2.date
+    }).map(exercise => {
+      return {
+        description: exercise.description,
+        duration: exercise.duration,
+        date: exercise.date.toDateString()
+      }
+    })
+
+    //"from" and "to" fields only added if from and to query params are valid dates
+    if(startDate != Number.MIN_SAFE_INTEGER){
+      responseObj.from = new Date(startDate).toDateString();
     }
 
-    if(endDate != 'Invalid Date'){
-      responseObj.to = endDate;
-      user.logs = user.logs.filter(exercise => {
-        return exercise.date <= endDate;
-      })
+    if(endDate != Number.MAX_SAFE_INTEGER){
+      responseObj.to = new Date(endDate).toDateString();
     }
 
-    if(limit){
-      user.logs = user.logs.slice(0,+limit);
+    if(limit) {
+      filteredLog = filteredLog.slice(0, limit);
     }
     
-    responseObj.count = user.logs.length;
-    responseObj.log = user.logs
+    responseObj.count = filteredLog.length;
+    responseObj.log = filteredLog;
+
     res.json(responseObj);
   }
 
   catch(err){
     res.send(err.message);
   }
-
 })
 
 const listener = app.listen(process.env.PORT || 3000, () => {
