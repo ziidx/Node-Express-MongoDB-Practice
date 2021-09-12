@@ -1,11 +1,11 @@
 const express = require('express')
 const app = express()
 const cors = require('cors')
+require('dotenv').config()
+
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
- 
 const route = require('./routes/route');
-require('dotenv').config()
 
 
 //Basic Configuration
