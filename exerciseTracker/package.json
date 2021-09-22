@@ -1,5 +1,5 @@
 {
-	"name": "workout-logger",
+	"name": "exercise-tracker",
 	"version": "1.0.0",
 	"description": "A REST API project for storing exercise/workout logs",
 	"main": "server.js",
@@ -15,7 +15,7 @@
 		"mongoose": "^6.0.4"
 	},
 	"repository": {
-		"url": "https://github.com/ziidx/workout-logger"
+		"url": "https://github.com/ziidx/Node-Express-MongoDB-Practice"
 	},
 	"license": "MIT",
 	"keywords": [
