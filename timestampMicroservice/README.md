@@ -5,4 +5,4 @@ GET to /api/:date? with a valid date format(including utc) should return a JSON 
 
 GET to /api/:date? with no param should return JSON object with the current date in unix and utc
 
-Invalid date formats will return the appropriate error message
+Error message will be returned if the given date is an invalid date
