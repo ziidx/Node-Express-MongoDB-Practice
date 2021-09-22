@@ -11,4 +11,4 @@ Adds the exercise to an array of user logs for the user document in the database
 GET to /api/users/:id/logs?from&to&limit requires user id parameter while from, to, and limit queries are all optional. Returns a json object containing user id of matching document,
 username, the number of exercises in the logs, and a log of all exercises stored. If from/to/limit is specified, only exercises meeting those constraints will be present in the returned object. From and to will also be added as a field in the returned json object if either is specified.
 
-Possible extensions in the future will be incorporating a react frontend in place of the html file being served
+
