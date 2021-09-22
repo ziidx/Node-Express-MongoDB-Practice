@@ -1,0 +1,1 @@
+Compilation of all completed FCC backend projects including the Timestamp Microservice, Request Parser Microservice, URL Shortener, Exercise Tracker, and File Metadata Microservice. Node/Express was used as the backend framework while MongoDB was used for the URL Shortener and Exercise Tracker.

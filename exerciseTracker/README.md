@@ -1,5 +1,3 @@
-Compilation of all completed FCC backend projects including the Timestamp Microservice, Request Parser Microservice, URL Shortener, Exercise Tracker, and File Metadata Microservice. Node/Express was used as the backend framework while MongoDB was used for the URL Shortener and Exercise Tracker.
-
 Simple application that utilizes Node/Express and MongoDB for storing exercise logs for particular users. Based off this [Exercise Tracker Exercise](https://www.freecodecamp.org/learn/apis-and-microservices/apis-and-microservices-projects/exercise-tracker)
 
 # Functionality
